@@ -23,8 +23,8 @@ interface Ripple {
     SettingsResponse setSettings(@PathParam("address") String address, SetSettingsRequest settings) throws RippleException, IOException;
 
     @POST
-    @Path("payments")
-    CreatePaymentResponse createPayment(PaymentRequest paymentRequest) throws RippleException, IOException;
+    @Path("accounts/{address}/payments")
+    CreatePaymentResponse createPayment(@PathParam("address") String address, PaymentRequest paymentRequest) throws RippleException, IOException;
 
     @GET
     @Path("accounts/{address}/payments/paths/{destinationAccount}/{destinationAmount}?{sourceCurrencies}")

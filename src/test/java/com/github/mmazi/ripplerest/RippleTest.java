@@ -11,35 +11,32 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static org.testng.Assert.fail;
+
 public class RippleTest {
 
-    public static final String ADDRESS1 = "rDiWNyxZqEfRrdsNbPPwgBUZFb4Xf17cNJ";
-    public static final String ADDRESS2 = "rhiAtoMmU2hFuzS6eWdtix29doajBLwatM";
-
-    public static final String ADDRESS2_SECRET = "sanGEaJxs4Q9buPXmYjeGYgvdtzbX";
-    public static final String ADDRESS1_SECRET = "ssx95aBiN5YYHWsuHrosLqyqyJsp2";
-
-    public static final Random RANDOM = new Random();
-
-    private static final Logger log = LoggerFactory.getLogger(RippleTest.class);
-
+    private static final String ADDRESS1 = "rEQVHJhVo74wX5UxoNZJTQP6iiUwNBKV8";
+    private static final String ADDRESS2 = "rKvRwBxwfxjLkudrdwwRnNwpuYpb6jspfj";
+    private static final String ADDRESS1_SECRET = "ssz1egtw9EoqNGswCX2bn7AiAyWwH";
+    private static final String EXISTING_PAYMENT_HASH = "8B4E584DB98DAC10BC48FC387A785FB06B32B50510D0FFB88B40AC47219A0379";
     private static final Pattern UUID_PATTERN = Pattern.compile("([a-f\\d]{8}(-[a-f\\d]{4}){3}-[a-f\\d]{12}?)");
-
+    private static final Logger log = LoggerFactory.getLogger(RippleTest.class);
+    private static final Random RANDOM = new Random();
     private Ripple ripple;
 
     @BeforeClass
     private void createClient() {
-        ripple = RippleClientFactory.createClient("http://localhost:5990/");
+        ripple = RippleClientFactory.createClient("https://api.altnet.rippletest.net:5990");
     }
 
     @Test
     public void testError() throws Exception {
-        final BalancesResponse response = ripple.getBalances("illegalAddress");
-        Assert.assertFalse(response.getSuccess());
-//        Assert.assertNotNull(response.getError()); // is actually null
-        Assert.assertNotNull(response.getMessage());
-        Assert.assertNull(response.getBalances());
-        Assert.assertTrue(response.getAdditionalProperties().isEmpty());
+        try {
+            ripple.getBalances("illegalAddress");
+            fail();
+        } catch (RippleException e) {
+            Assert.assertEquals(e.getMessage(), "Parameter is not a valid Ripple address: account");
+        }
     }
 
     @Test
@@ -93,6 +90,7 @@ public class RippleTest {
 
     private void testSetRequireDestinationTag(AccountSettings settings, Boolean set) throws IOException {
         settings.setRequireDestinationTag(set);
+        settings.setNoFreeze(null);
         final String uuid = createUUID();
         final SettingsResponse result = ripple.setSettings(ADDRESS1, new SetSettingsRequest(ADDRESS1_SECRET, uuid, settings));
         assertResponse(result);
@@ -107,7 +105,7 @@ public class RippleTest {
 //        final String uuid = ripple.generateUuid().getUuid();
         final BigDecimal value = BigDecimal.valueOf(RANDOM.nextInt(8) + 1);
         final Amount amount = new Amount(value, "XRP");
-        final CreatePaymentResponse createPaymentResponse = ripple.createPayment(new PaymentRequest(ADDRESS1_SECRET, uuid, new Payment(
+        final CreatePaymentResponse createPaymentResponse = ripple.createPayment(ADDRESS1, new PaymentRequest(ADDRESS1_SECRET, uuid, new Payment(
                 ADDRESS1, ADDRESS2, amount, null, BigDecimal.valueOf(0.02), 2L, 3L, null, false, false, null
         )));
         assertResponse(createPaymentResponse);
@@ -117,7 +115,7 @@ public class RippleTest {
         assertResponse(paymentResponse);
         Payment pmt = paymentResponse.getPayment();
         Assert.assertEquals(pmt.getSourceAmount().getValue(), value);
-        final String pmtHash = pmt.getHash();
+        final String pmtHash = paymentResponse.getHash();
         paymentResponse = ripple.getPayment(ADDRESS1, pmtHash);
         assertResponse(paymentResponse);
         pmt = paymentResponse.getPayment();
@@ -145,7 +143,7 @@ public class RippleTest {
         }
     }
 
-    @Test
+    @Test(enabled = false)
     public void testTrustlines() throws Exception {
         TrustlinesResponse trustlinesResponse = ripple.getTrustlines(ADDRESS1, null, null);
         assertResponse(trustlinesResponse);
@@ -180,14 +178,13 @@ public class RippleTest {
 
     @Test
     public void testGetNotification() throws Exception {
-        final String hash = "C61B3B8849EE84B17B767F0BC5F2BC5CD8D40161C931EAF921CB7201C0417CBC";
-        final NotificationResponse notificationResponse = ripple.getNotifictaion(ADDRESS2, hash);
+        final NotificationResponse notificationResponse = ripple.getNotifictaion(ADDRESS2, EXISTING_PAYMENT_HASH);
         assertResponse(notificationResponse);
         final Notification notification = notificationResponse.getNotification();
-        Assert.assertEquals(notification.getHash(), hash);
+        Assert.assertEquals(notification.getHash(), EXISTING_PAYMENT_HASH);
         Assert.assertEquals(notification.getAccount(), ADDRESS2);
         assertSensiblePastTimestamp(notification.getTimestamp());
-        Assert.assertTrue(notification.getTransactionUrl().contains(hash));
+        Assert.assertTrue(notification.getTransactionUrl().contains(EXISTING_PAYMENT_HASH));
     }
 
     @Test
@@ -210,8 +207,7 @@ public class RippleTest {
 
     @Test
     public void testGetTransactionDetails() throws Exception {
-        final String hash = "C61B3B8849EE84B17B767F0BC5F2BC5CD8D40161C931EAF921CB7201C0417CBC";
-        final TransactionResponse transactionDetails = ripple.getTransactionDetails(hash);
+        final TransactionResponse transactionDetails = ripple.getTransactionDetails(EXISTING_PAYMENT_HASH);
         assertResponse(transactionDetails);
         final Transaction tx = transactionDetails.getTransaction();
         Assert.assertNotNull(tx);
@@ -232,10 +228,6 @@ public class RippleTest {
         Assert.assertNotNull(tx.getValidated());
         Assert.assertNotNull(tx.getDate());
         Assert.assertTrue(tx.getDate().before(new Date()));
-        final Calendar cal = Calendar.getInstance();
-        cal.setTime(tx.getDate());
-        Assert.assertTrue(cal.get(Calendar.YEAR) >= 2013);
-        Assert.assertTrue(cal.get(Calendar.YEAR) <= 2014);
     }
 
     @Test

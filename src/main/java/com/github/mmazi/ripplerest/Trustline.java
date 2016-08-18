@@ -98,6 +98,17 @@ public class Trustline implements Serializable, HasAdditionalProperties {
     @Valid
     private Trustline previous;
 
+    public Boolean getAccountTrustlineFrozen() {
+        return accountTrustlineFrozen;
+    }
+
+    public void setAccountTrustlineFrozen(Boolean accountTrustlineFrozen) {
+        this.accountTrustlineFrozen = accountTrustlineFrozen;
+    }
+
+    @JsonProperty("account_trustline_frozen")
+    private Boolean accountTrustlineFrozen = null;
+
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     ///////////////////////////////////////////////

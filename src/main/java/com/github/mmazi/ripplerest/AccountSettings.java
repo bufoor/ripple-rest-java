@@ -31,7 +31,16 @@ public class AccountSettings implements Serializable, HasAdditionalProperties {
     @JsonProperty("require_destination_tag")
     private Boolean requireDestinationTag = null;
 
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    @JsonProperty("global_freeze")
+    private Boolean globalFreeze = null;
+
+    @JsonProperty("no_freeze")
+    private Boolean noFreeze = null;
+
+    @JsonProperty("default_ripple")
+    private Boolean defaultRipple;
+
+    private Map<String, Object> additionalProperties = new HashMap<>();
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // other fields
@@ -207,6 +216,29 @@ public class AccountSettings implements Serializable, HasAdditionalProperties {
                 disableMaster, disallowXrp, passwordSpent, requireAuthorization, requireDestinationTag, additionalProperties, transactionSequence, emailHash, walletLocator, messageKey, domain, transferRate, signers);
     }
 
+    public Boolean getGlobalFreeze() {
+        return globalFreeze;
+    }
+
+    public void setGlobalFreeze(Boolean globalFreeze) {
+        this.globalFreeze = globalFreeze;
+    }
+
+    public Boolean getNoFreeze() {
+        return noFreeze;
+    }
+
+    public void setNoFreeze(Boolean noFreeze) {
+        this.noFreeze = noFreeze;
+    }
+
+    public Boolean getDefaultRipple() {
+        return defaultRipple;
+    }
+
+    public void setDefaultRipple(Boolean defaultRipple) {
+        this.defaultRipple = defaultRipple;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

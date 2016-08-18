@@ -167,6 +167,12 @@ public class Payment implements Serializable, HasAdditionalProperties {
     @Valid
     private List<Amount> destinationBalanceChanges = new ArrayList<Amount>();
 
+    @JsonProperty("order_changes")
+    private List<Amount> orderChanges;
+
+    @JsonProperty("balance_changes")
+    private List<Amount> balanceChanges;
+
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -270,6 +276,22 @@ public class Payment implements Serializable, HasAdditionalProperties {
 
     public List<Amount> getDestinationBalanceChanges() {
         return destinationBalanceChanges;
+    }
+
+    public List<Amount> getBalanceChanges() {
+        return balanceChanges;
+    }
+
+    public void setBalanceChanges(List<Amount> balanceChanges) {
+        this.balanceChanges = balanceChanges;
+    }
+
+    public List<Amount> getOrderChanges() {
+        return orderChanges;
+    }
+
+    public void setOrderChanges(List<Amount> orderChanges) {
+        this.orderChanges = orderChanges;
     }
 
     @JsonAnyGetter

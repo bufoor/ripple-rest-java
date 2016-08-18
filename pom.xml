@@ -39,7 +39,7 @@
         <dependency>
             <groupId>com.github.mmazi</groupId>
             <artifactId>rescu</artifactId>
-            <version>1.6.1-SNAPSHOT</version>
+            <version>LATEST</version>
         </dependency>
         <dependency>
             <groupId>javax.validation</groupId>
@@ -64,6 +64,13 @@
 
     <build>
         <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
             <plugin>
                 <!--
                   This can be used to generate Java beans from json schema files (assumes these are located in

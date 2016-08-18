@@ -132,6 +132,12 @@ public class Transaction implements Serializable, HasAdditionalProperties {
     @NotNull
     private String signingPubKey;
 
+    @JsonProperty("client_resource_id")
+    private String clientResourceId;
+
+    @JsonProperty("DestinationTag")
+    private Long destinationTag;
+
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
 
@@ -258,5 +264,21 @@ public class Transaction implements Serializable, HasAdditionalProperties {
                 ", signingPubKey='" + signingPubKey + '\'' +
                 ", additionalProperties=" + additionalProperties +
                 ']';
+    }
+
+    public String getClientResourceId() {
+        return clientResourceId;
+    }
+
+    public void setClientResourceId(String clientResourceId) {
+        this.clientResourceId = clientResourceId;
+    }
+
+    public Long getDestinationTag() {
+        return destinationTag;
+    }
+
+    public void setDestinationTag(Long destinationTag) {
+        this.destinationTag = destinationTag;
     }
 }

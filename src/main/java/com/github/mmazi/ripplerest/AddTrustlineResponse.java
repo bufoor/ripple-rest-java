@@ -6,6 +6,8 @@ public class AddTrustlineResponse extends RippleResponse<Trustline> {
 
     private Long ledger;
 
+    private String state;
+
     private Trustline trustline;
 
     public Trustline getTrustline() {
@@ -23,5 +25,13 @@ public class AddTrustlineResponse extends RippleResponse<Trustline> {
     @Override
     public Trustline getValue() {
         return getTrustline();
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

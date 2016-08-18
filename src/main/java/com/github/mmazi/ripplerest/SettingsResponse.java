@@ -8,6 +8,8 @@ public class SettingsResponse extends RippleResponse<AccountSettings> {
 
     private Long ledger;
 
+    private String state;
+
     public AccountSettings getSettings() {
         return settings;
     }
@@ -23,5 +25,13 @@ public class SettingsResponse extends RippleResponse<AccountSettings> {
 
     public Long getLedger() {
         return ledger;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

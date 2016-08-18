@@ -1,9 +1,6 @@
 package com.github.mmazi.ripplerest;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 
 import javax.validation.Valid;
 import java.io.Serializable;
@@ -50,6 +47,12 @@ public class RippledServerStatus implements Serializable, HasAdditionalPropertie
 
     @JsonProperty("io_latency_ms")
     private String ioLatencyMs;
+
+    @JsonProperty("state_accounting")
+    private Map<String, Object>  stateAccounting;
+
+    @JsonProperty("uptime")
+    private Long uptime;
 
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -122,6 +125,21 @@ public class RippledServerStatus implements Serializable, HasAdditionalPropertie
                 buildVersion, completeLedgers, hostid, lastClose, loadFactor, peers, pubkeyNode, serverState, validatedLedger, validationQuorum, additionalProperties);
     }
 
+    public Map<String, Object> getStateAccounting() {
+        return stateAccounting;
+    }
+
+    public void setStateAccounting(Map<String, Object> stateAccounting) {
+        this.stateAccounting = stateAccounting;
+    }
+
+    public Long getUptime() {
+        return uptime;
+    }
+
+    public void setUptime(Long uptime) {
+        this.uptime = uptime;
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 

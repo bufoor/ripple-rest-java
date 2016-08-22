@@ -9,6 +9,9 @@ public class PaymentWithId implements Serializable {
     @JsonProperty("client_resource_id")
     private String clientResourceId;
 
+    @JsonProperty("hash")
+    private String hash;
+
     private Payment payment;
 
     public String getClientResourceId() {
@@ -17,5 +20,9 @@ public class PaymentWithId implements Serializable {
 
     public Payment getPayment() {
         return payment;
+    }
+
+    public String getHash() {
+        return hash;
     }
 }

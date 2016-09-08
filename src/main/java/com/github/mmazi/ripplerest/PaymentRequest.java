@@ -13,4 +13,11 @@ public class PaymentRequest extends RippleRequest {
         super(secret, clientResourceId);
         this.payment = payment;
     }
+
+    @Override
+    public String toString() {
+        return "PaymentRequest{" +
+            "payment=" + payment +
+            '}';
+    }
 }

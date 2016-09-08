@@ -14,4 +14,11 @@ public class PaymentsResponse extends RippleResponse<List<PaymentWithId>> {
     public List<PaymentWithId> getValue() {
         return getPayments();
     }
+
+    @Override
+    public String toString() {
+        return "PaymentsResponse{" +
+            "payments=" + payments +
+            '}';
+    }
 }

@@ -25,4 +25,13 @@ public class PaymentWithId implements Serializable {
     public String getHash() {
         return hash;
     }
+
+    @Override
+    public String toString() {
+        return "PaymentWithId{" +
+            "clientResourceId='" + clientResourceId + '\'' +
+            ", hash='" + hash + '\'' +
+            ", payment=" + payment +
+            '}';
+    }
 }

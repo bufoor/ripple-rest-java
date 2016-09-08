@@ -5,14 +5,14 @@ import java.math.BigDecimal;
 import java.util.*;
 
 public class PaymentClient {
-    private static final String ADDRESS1 = "rpJUeKpZQfxabq5hW3dZz2m7rRbi7Yfx1D";
-    private static final String ADDRESS1_SECRET = "shYwXgof7aEuLmzsq27vhcHRKAUNa";
-    private static final String ADDRESS2 = "rGNeD9x2dw8vsZp4XjM8ooXdFwQmuDQwcP";
+    private static final String USER_ADDRESS = "rNsa4RDNCwEPUcST8zMTQhqBrfABdWkzQF";
+    private static final String USER_ADDRESS_SECRET = "snJTPWZCkoW753VuFZT6SqhWhch9w";
+    public static final String IPE_ADDRESS = "rUurnm8KNwggqTWHoS4nkhBuXqQR2PggXW";
 
     public static void main(String[] args) throws IOException {
         System.out.println(System.getProperty("java.version"));
-//        sendPayment();
-        processIncome();
+        sendPayment(105);
+//        processIncome();
 //        receivePayments();
     }
 
@@ -22,7 +22,7 @@ public class PaymentClient {
         String lastTransactionId = ibLastTransferIn;
         Ripple ripple = RippleClientFactory.createClient("https://api.altnet.rippletest.net:5990");
         PaymentsResponse paymentResponse = ripple.getPayments(
-                "rGNeD9x2dw8vsZp4XjM8ooXdFwQmuDQwcP",
+            IPE_ADDRESS,
                 null,
                 null,
                 true,
@@ -85,7 +85,7 @@ public class PaymentClient {
 
     private static void receivePayments() throws IOException {
         Ripple ripple = RippleClientFactory.createClient("https://api.altnet.rippletest.net:5990");
-        final PaymentsResponse paymentsResponse = ripple.getPayments(ADDRESS2, null, null, true, null, null, true, 10, 1);
+        final PaymentsResponse paymentsResponse = ripple.getPayments(IPE_ADDRESS, null, null, true, null, null, true, 10, 1);
         final List<PaymentWithId> payments = paymentsResponse.getPayments();
         System.out.println("Got " + payments.size() + " payments.");
 
@@ -98,17 +98,17 @@ public class PaymentClient {
         }
     }
 
-    private static void sendPayment() throws IOException {
+    private static void sendPayment(int amount1) throws IOException {
         Ripple ripple = RippleClientFactory.createClient("https://api.altnet.rippletest.net:5990");
         final String uuid = createUUID();
-        final BigDecimal value = BigDecimal.valueOf(16);
+        final BigDecimal value = BigDecimal.valueOf(amount1);
         final Amount amount = new Amount(value, "XRP");
         final CreatePaymentResponse createPaymentResponse = ripple.createPayment(
-                ADDRESS1,
-                new PaymentRequest(ADDRESS1_SECRET, uuid,
+            USER_ADDRESS,
+                new PaymentRequest(USER_ADDRESS_SECRET, uuid,
                          new Payment(
-                                ADDRESS1,
-                                ADDRESS2,
+                             USER_ADDRESS,
+                                IPE_ADDRESS,
                                 amount,
                                 null,
                                 BigDecimal.valueOf(0.02),
@@ -120,17 +120,19 @@ public class PaymentClient {
                                 null
         )));
         System.out.println("Payment status url: " + createPaymentResponse.getStatusUrl());
-        PaymentResponse paymentResponse = ripple.getPayment(ADDRESS1, uuid);
+        PaymentResponse paymentResponse = ripple.getPayment(USER_ADDRESS, uuid);
         Payment payment = paymentResponse.getPayment();
         final String pmtHash = paymentResponse.getHash();
-        paymentResponse = ripple.getPayment(ADDRESS1, pmtHash);
+        paymentResponse = ripple.getPayment(USER_ADDRESS, pmtHash);
         payment = paymentResponse.getPayment();
 
         System.out.println("amount: " + payment.getSourceAmount());
         System.out.println("sourceAccount: " + payment.getSourceAccount());
         System.out.println("sourceAmount: " + payment.getSourceAccount());
         System.out.println("destinationAccount: " + payment.getDestinationAccount());
-        System.out.println("paymentFee" + payment.getFee().doubleValue());
+        System.out.println("paymentFee: " + payment.getFee().doubleValue());
+        System.out.println("paymentHash: " + payment.getHash());
+        System.out.println("responseHash: " + createPaymentResponse.getValue());
 
     }
 
